@@ -5,7 +5,7 @@ import torch
 from RNN_trainer import predict_batch
 from config import LSTM_NUM_LAYERS, HIDDEN_SIZE, FRAME_SIZE, FRAME_STEP, N_FEATURES, N_FILT, N_FFT, SCALER_PATH, \
     BATCH_FIRST, INPUT_SIZE, LINEAR_SIZE, OUTPUT_SIZE, CODE_CLASS_MAP, MODEL_NAME, MODELS_DIR
-from data_processing.feature_extraction import mfcc_feature_extractor
+from data_processing.feature_extractor import mfcc_feature_extractor
 from models import AntiSpoofingRNN
 from utilities.basic_utils import get_accelerator, make_valid_path
 from utilities.disply_utils import info

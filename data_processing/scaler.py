@@ -43,33 +43,33 @@ def scale_file(scaler, source_file, target_file):
     np.save(target_file, file_scaled)
 
 
-# if __name__ == '__main__':
-#     files_to_create_scale = []
-#     for class_ in os.listdir(TRAIN_PROCESSED_DIR):
-#         class_dir = os.path.join(TRAIN_PROCESSED_DIR, class_)
-#         for file in os.listdir(class_dir):
-#             files_to_create_scale.append(os.path.join(class_dir, file))
-#
-#     # Creating scaler
-#     scaler = create_scaler(files_to_create_scale, SCALER_PATH)
-#     with open(SCALER_PATH, "rb") as f:
-#         scaler = pickle.load(f)
-#
-#     # scale train / val
-#     for split_dir, scaled_dir in zip([TRAIN_PROCESSED_DIR, VAL_PROCESSED_DIR], [TRAIN_SCALED_DIR, VAL_SCALED_DIR]):
-#         for class_ in os.listdir(split_dir):
-#             class_dir = os.path.join(split_dir, class_)
-#             for i, file in enumerate(os.listdir(class_dir)):
-#                 if i%200 == 0:
-#                     print(f"[{datetime.now()}] -- {i} files processed...")
-#                 src_file = os.path.join(class_dir, file)
-#                 target_dir = make_valid_path(os.path.join(scaled_dir, class_), is_dir=True)
-#                 target_file = os.path.join(target_dir, file)
-#                 scale_file(scaler, src_file, target_file)
-#     # scale test
-#     for i, file in enumerate(os.listdir(TEST_PROCESSED_DIR)):
-#         if i%200 == 0:
-#             print(f"[{datetime.now()}] -- {i} files processed...")
-#         src_file = os.path.join(TEST_PROCESSED_DIR, file)
-#         target_file = os.path.join( make_valid_path(TEST_SCALED_DIR, is_dir=True), file)
-#         scale_file(scaler, src_file, target_file)
+def scale_sets():
+    files_to_create_scale = []
+    for class_ in os.listdir(TRAIN_PROCESSED_DIR):
+        class_dir = os.path.join(TRAIN_PROCESSED_DIR, class_)
+        for file in os.listdir(class_dir):
+            files_to_create_scale.append(os.path.join(class_dir, file))
+
+    # Creating scaler
+    create_scaler(files_to_create_scale, SCALER_PATH)
+    with open(SCALER_PATH, "rb") as f:
+        scaler = pickle.load(f)
+
+    # scale train / val
+    for split_dir, scaled_dir in zip([TRAIN_PROCESSED_DIR, VAL_PROCESSED_DIR], [TRAIN_SCALED_DIR, VAL_SCALED_DIR]):
+        for class_ in os.listdir(split_dir):
+            class_dir = os.path.join(split_dir, class_)
+            for i, file in enumerate(os.listdir(class_dir)):
+                if i%200 == 0:
+                    print(f"[{datetime.now()}] -- {i} files processed...")
+                src_file = os.path.join(class_dir, file)
+                target_dir = make_valid_path(os.path.join(scaled_dir, class_), is_dir=True)
+                target_file = os.path.join(target_dir, file)
+                scale_file(scaler, src_file, target_file)
+    # scale test
+    for i, file in enumerate(os.listdir(TEST_PROCESSED_DIR)):
+        if i%200 == 0:
+            print(f"[{datetime.now()}] -- {i} files processed...")
+        src_file = os.path.join(TEST_PROCESSED_DIR, file)
+        target_file = os.path.join( make_valid_path(TEST_SCALED_DIR, is_dir=True), file)
+        scale_file(scaler, src_file, target_file)

@@ -96,16 +96,16 @@ class mfcc_feature_extractor:
 
 
 # Driver part for this file, we can extract data from using the default values in config file
-# if __name__ == '__main__':
-#     feature_extractor = mfcc_feature_extractor(frame_size=FRAME_SIZE, frame_step=FRAME_STEP, numcep=N_FEATURES,
-#                                                nfilt=N_FILT, nfft=N_FFT)
-#     # training data has two classes, each in seperate folder
-#     for class_name in os.listdir(TRAIN_RAW_DIR):
-#         input_dir = os.path.join(TRAIN_RAW_DIR, class_name)
-#         output_dir = os.path.join(TRAIN_PROCESSED_DIR,class_name)
-#
-#         feature_extractor.process_data(input_dir=input_dir, output_dir=make_valid_path(output_dir, is_dir=True))
-#
-#     feature_extractor.process_data(input_dir=TEST_RAW_DIR,
-#                                    output_dir=make_valid_path(TEST_PROCESSED_DIR, is_dir=True))
-#
+def extract_features():
+    feature_extractor = mfcc_feature_extractor(frame_size=FRAME_SIZE, frame_step=FRAME_STEP, numcep=N_FEATURES,
+                                               nfilt=N_FILT, nfft=N_FFT)
+    # training data has two classes, each in seperate folder
+    for class_name in os.listdir(TRAIN_RAW_DIR):
+        input_dir = os.path.join(TRAIN_RAW_DIR, class_name)
+        output_dir = os.path.join(TRAIN_PROCESSED_DIR,class_name)
+
+        feature_extractor.process_data(input_dir=input_dir, output_dir=make_valid_path(output_dir, is_dir=True))
+
+    feature_extractor.process_data(input_dir=TEST_RAW_DIR,
+                                   output_dir=make_valid_path(TEST_PROCESSED_DIR, is_dir=True))
+
