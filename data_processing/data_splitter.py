@@ -1,3 +1,8 @@
+"""
+Summary:
+This files defines a function which takes a split of train set to be used later for model validation.
+All parameters for input and output directories, class names used for classification are indicated in the config.py file
+"""
 import os
 import random
 

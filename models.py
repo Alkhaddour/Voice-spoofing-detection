@@ -1,3 +1,5 @@
+# This file defines the model used in the task
+
 from torch import nn
 from config import BATCH_FIRST
 
@@ -15,21 +17,3 @@ class AntiSpoofingRNN(nn.Module):
         x = self.l2(x)
         x = nn.Sigmoid()(x)
         return x
-
-# if __name__ == '__main__':
-#     import torch
-#     from torch import nn
-#     from torch.utils.data import DataLoader
-#     from datasets import ReplySpoofDataset, collate_fn_pad
-#     from config import INPUT_SIZE, HIDDEN_SIZE, LINEAR_SIZE, LSTM_NUM_LAYERS, BATCH_SIZE, OUTPUT_SIZE, VAL_INDEX
-#
-#     net = AntiSpoofingRNN(INPUT_SIZE, HIDDEN_SIZE, LSTM_NUM_LAYERS, LINEAR_SIZE, OUTPUT_SIZE)
-#     dataset = ReplySpoofDataset(VAL_INDEX)
-#     train_loader = DataLoader(dataset, shuffle=True, batch_size=BATCH_SIZE, collate_fn=collate_fn_pad)
-#     for x, _ in train_loader:
-#         input = x
-#         break
-#     h0 = torch.randn(LSTM_NUM_LAYERS, BATCH_SIZE, HIDDEN_SIZE)  # D * num_layers, N, H_out
-#     c0 = torch.randn(LSTM_NUM_LAYERS, BATCH_SIZE, HIDDEN_SIZE)
-#     out = net(input, h0, c0)
-#     print(out[0])

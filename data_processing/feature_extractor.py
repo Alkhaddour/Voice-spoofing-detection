@@ -1,4 +1,12 @@
-# This file defines the features extraction class used to extract MFCC features from the speech records
+"""
+Summary:
+This file defines mfcc_feature_extractor class which is used to extract mfcc feature from audio signal. The class
+provides the possibility to extract MFCC features from single wav file, and also to process a directory of wav files
+with saving the extracted features of each file to an output directory
+
+The file also contains a driver function extract_features() which extract features from train and test sets and save
+results to other directory, this function uses the parameters defined in the config.py file.
+"""
 
 from python_speech_features import mfcc
 from utilities.basic_utils import warn, make_valid_path
@@ -12,8 +20,8 @@ from utilities.disply_utils import info
 
 
 class mfcc_feature_extractor:
-    def __init__(self, frame_size=20, frame_step=10, numcep=13, nfilt=26, nfft=512, preemph=0,
-                 ceplifter=0, verbose=1):
+    def __init__(self, frame_size=20, frame_step=10, numcep=13, nfilt=26, nfft=512, preemph=0, ceplifter=0, verbose=1):
+
         self.frame_size = frame_size  # in milliseconds
         self.frame_step = frame_step  # in milliseconds
         self.numcep = numcep
@@ -23,7 +31,8 @@ class mfcc_feature_extractor:
         self.ceplifter = ceplifter
         self.verbose = verbose
 
-    def _ms_to_sample(self, ms, sample_rate):
+    @staticmethod
+    def _ms_to_sample(ms, sample_rate):
         """
         finds how many samples in the ms milliseconds
         :param ms:
@@ -31,6 +40,7 @@ class mfcc_feature_extractor:
         """
         return int(ms * sample_rate / 1000)
 
+    @staticmethod
     def _signal_duration(self, signal, sample_rate, unit='m'):
         """
         Finds out signal duration in minutes or seconds.
@@ -64,8 +74,9 @@ class mfcc_feature_extractor:
     def process_data(self, input_dir, output_dir):
         """
         This function extracts features from each utterance and save it to disk
-        :param input_dir: Directory containing utterance
-        :param output_dir: directory to save features of utterances
+        :param input_dir: directory containing utterances (each of them is .wav file)
+        :param output_dir: directory to save features extracted of utterances as numpy array (replace .wav file
+                           extension with .npy)
         """
         for filename in os.listdir(input_dir):
             info(f'[{datetime.now()}] -- Processing file {filename} ...')
@@ -82,7 +93,7 @@ class mfcc_feature_extractor:
 
     def process_audio(self, audio_path):
         """
-        This functions takes a path to a wave file and extract MFCC from it
+        This function takes a path to a wave file then extracts and returns MFCC features from it
         :param audio_path: path to a wave file
         :return: MFCC extracted from this file
         """
@@ -95,11 +106,12 @@ class mfcc_feature_extractor:
         return mfcc_features
 
 
-# Driver part for this file, we can extract data from using the default values in config file
+# Driver part for this file, can be used to extract features from train and test sets using the default params in the
+# config file
 def extract_features():
     feature_extractor = mfcc_feature_extractor(frame_size=FRAME_SIZE, frame_step=FRAME_STEP, numcep=N_FEATURES,
                                                nfilt=N_FILT, nfft=N_FFT)
-    # training data has two classes, each in seperate folder
+    # training data has two classes, each in separate folder
     for class_name in os.listdir(TRAIN_RAW_DIR):
         input_dir = os.path.join(TRAIN_RAW_DIR, class_name)
         output_dir = os.path.join(TRAIN_PROCESSED_DIR,class_name)

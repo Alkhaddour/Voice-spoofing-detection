@@ -1,4 +1,12 @@
-# create index of train/val/test files
+"""
+Summary:
+This file defines a function used to create index of train/val/test sets. An index contains paths for files of extracted
+features, each file represents one audio file (for details see feature_extractor.py file)
+
+The index contains a list of pairs (the first element is a file path and the second is its label) saved as binary file
+using pickle library
+"""
+
 import os
 import pickle
 

@@ -1,9 +1,9 @@
+# This file contains different display utilities used in the project
 from datetime import datetime
 
 from matplotlib import pyplot as plt
 from config import SHOW_WARNINGS, SHOW_INFO_MESSAGES
 import numpy as np
-import torch
 
 
 def warn(msg, with_time=True):
@@ -26,22 +26,6 @@ def info(msg, with_time=True):
             print(f'[{datetime.now()}] -- {msg}')
         else:
             print(msg)
-
-
-def plot_histogram(data, bin_width, plot_title, xlabel, ylabel):
-    # fixed bin size
-    bin_min = int(min(data))
-    bin_max = int(max(data)) + 1
-    bins = np.arange(bin_min, bin_max, bin_width)  # fixed bin size
-
-    plt.xlim([0, max(data) + 1])
-
-    plt.hist(data, bins=bins, alpha=0.5)
-    plt.title(plot_title)
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
-
-    plt.show()
 
 
 def plot_losses(plot_name, train_loss, val_loss):

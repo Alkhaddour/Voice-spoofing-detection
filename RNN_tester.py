@@ -1,18 +1,33 @@
-import pickle
+# This file contains the functions used to test or use model. The first function is test() which is used when the data
+# used to test the model when a dataloader is available. The function expects the loader to provide data with its
+# labels.
 
 import torch
-
 from RNN_trainer import predict_batch
-from config import LSTM_NUM_LAYERS, HIDDEN_SIZE, FRAME_SIZE, FRAME_STEP, N_FEATURES, N_FILT, N_FFT, SCALER_PATH, \
-    BATCH_FIRST, INPUT_SIZE, LINEAR_SIZE, OUTPUT_SIZE, CODE_CLASS_MAP, MODEL_NAME, MODELS_DIR
 from data_processing.feature_extractor import mfcc_feature_extractor
-from models import AntiSpoofingRNN
-from utilities.basic_utils import get_accelerator, make_valid_path
+from utilities.basic_utils import get_accelerator
 from utilities.disply_utils import info
-from utilities.model_utils import Metrics, ModelManager
+from utilities.model_utils import Metrics
+from config import FRAME_SIZE, FRAME_STEP, N_FEATURES, N_FILT, N_FFT, BATCH_FIRST, CODE_CLASS_MAP
 
 
 def test(model, test_loader, pred_threshold=0.5, device=get_accelerator('cuda')):
+    """
+    Test model using data from data loader
+    :param model: model to be tested
+    :param test_loader: Test Loader (pytorch dataloader)
+    :param pred_threshold: The threshold used to identify to which class belongs the sample being tested. If
+    pred_threshold == 'auto', then the best threshold is determined using precision-recall curve, we used the value
+    which gives the highest F1-score.
+    :param device: Accelerator used (GPU or CPU)
+    :return:    files_all: list of files used to test model
+                labels_all: list of true labels
+                outputs_all: list of predicted labels
+                probs_all: list of probabilities, if probability is less than pred_threshold then the the sample is of
+                           class 0, otherwise it belongs to class 1
+                pred_threshold: the threshold used to determine class
+
+    """
     model = model.to(device)
     labels_all = []
     probs_all = []
@@ -34,6 +49,16 @@ def test(model, test_loader, pred_threshold=0.5, device=get_accelerator('cuda'))
 
 
 def test_sample(model, audio_path, scaler, return_code=True, pred_threshold=0.5, device=get_accelerator('cuda')):
+    """
+    Predict class of an audio file
+    :param model: Model used for prediction
+    :param audio_path: Input wave file to classify
+    :param scaler: Scaler used to scale data
+    :param return_code: True then return class index, otherwise return a string representing the class
+    :param pred_threshold: Threshold used to determine class from probability.
+    :param device: Accelerator used (GPU or CPU)
+    :return: Class of audio file
+    """
     feature_extractor = mfcc_feature_extractor(frame_size=FRAME_SIZE, frame_step=FRAME_STEP, numcep=N_FEATURES,
                                                nfilt=N_FILT, nfft=N_FFT)
     features = feature_extractor.process_audio(audio_path)
@@ -51,53 +76,3 @@ def test_sample(model, audio_path, scaler, return_code=True, pred_threshold=0.5,
     else:
         return CODE_CLASS_MAP[output]
 
-
-# if __name__ == '__main__':
-#     model = AntiSpoofingRNN(INPUT_SIZE, HIDDEN_SIZE, LSTM_NUM_LAYERS, LINEAR_SIZE, OUTPUT_SIZE)
-#     model_manager = ModelManager(MODEL_NAME, make_valid_path(MODELS_DIR, is_dir=True, exist_ok=True))
-#     model, _ = model_manager.load_checkpoint(MODEL_NAME + '.pkl', model)
-#
-#     audio_path = 'E:/Datasets/ID R&D/data/raw/Training_Data/human/human_00000.wav'
-#     # Load scaler
-#     with open(SCALER_PATH, "rb") as f:
-#         scaler = pickle.load(f)
-#
-#     out = test_sample(model, audio_path, scaler, pred_threshold=0.2630763351917267)
-#     info(f"Sample classified as {CODE_CLASS_MAP[out]}")
-
-# if __name__ == '__main__':
-#     info("Testing model")
-#     model = AntiSpoofingRNN(INPUT_SIZE, HIDDEN_SIZE, LSTM_NUM_LAYERS, LINEAR_SIZE, OUTPUT_SIZE)
-#     model_manager = ModelManager(MODEL_NAME, make_valid_path(MODELS_DIR, is_dir=True, exist_ok=True))
-#     model, _ = model_manager.load_checkpoint(MODEL_NAME + '.pkl', model)
-#
-#     info("Validating performance on train data")
-#     train_dataset = ReplySpoofDataset(TRAIN_INDEX)
-#     train_loader = DataLoader(train_dataset, shuffle=True, batch_size=BATCH_SIZE, collate_fn=collate_fn_pad)
-#     files, y_true, y_pred, y_prob, threshold = test(model, train_loader, pred_threshold='auto',
-#                                                     device=get_accelerator('cuda'))
-#     export_incorrect_samples_to_csv(files, y_pred, y_true, os.path.join(OUTPUT_DIR, 'train_incorrect.csv'))
-#     info(f"Classification threshold = {threshold}")  # threshold = 0.23641443252563477
-#     info("Calculating train metrics")
-#     train_metrics, train_metrics_str = Metrics.calculate_metrics(y_true, y_pred, y_prob)
-#     info(f"Train accuracy = {train_metrics['Accuracy']:0.4f}")
-#
-#     info("Validating performance on validation data")
-#     val_dataset = ReplySpoofDataset(VAL_INDEX)
-#     val_loader = DataLoader(val_dataset, shuffle=True, batch_size=BATCH_SIZE, collate_fn=collate_fn_pad)
-#     files, y_true, y_pred, y_prob, threshold = test(model, val_loader, pred_threshold=threshold,
-#                                                     device=get_accelerator('cuda'))
-#     export_incorrect_samples_to_csv(files, y_pred, y_true, os.path.join(OUTPUT_DIR, 'val_incorrect.csv'))
-#     info("Calculating validation metrics")
-#     val_metrics, val_metrics_str = Metrics.calculate_metrics(y_true, y_pred, y_prob)
-#     info(f"Validation accuracy = {val_metrics['Accuracy']:0.4f}")
-#
-#     with open(os.path.join(OUTPUT_DIR, 'metrics.csv'), 'w') as f:
-#         train_metrics['#'] = 'Train'
-#         val_metrics['#'] = 'Validation'
-#         w = csv.DictWriter(f, sorted(val_metrics.keys()))
-#         w.writeheader()
-#         w.writerow(train_metrics)
-#         w.writerow(val_metrics)
-#
-#     info("Testing model done!")
