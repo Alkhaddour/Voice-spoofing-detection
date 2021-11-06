@@ -3,3 +3,5 @@
 __pycache__/
 models/backup/*
 output/backup/*
+output/train_incorrect.csv
+output/val_incorrect.csv
