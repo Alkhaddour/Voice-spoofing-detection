@@ -6,7 +6,6 @@ import torch
 from RNN_trainer import predict_batch
 from data_processing.feature_extractor import mfcc_feature_extractor
 from utilities.basic_utils import get_accelerator
-from utilities.disply_utils import info
 from utilities.model_utils import Metrics
 from tqdm import tqdm
 import time

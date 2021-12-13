@@ -1,4 +1,5 @@
 # This file contains different display utilities used in the project
+import time
 from datetime import datetime
 
 from matplotlib import pyplot as plt
@@ -26,6 +27,7 @@ def info(msg, with_time=True):
             print(f'[{datetime.now()}] -- {msg}')
         else:
             print(msg)
+    time.sleep(0.5) # to force buffer dump to stdout (used for tqdm call)
 
 
 def plot_losses(plot_name, train_loss, val_loss):

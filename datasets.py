@@ -8,7 +8,6 @@ from tqdm import tqdm
 import numpy as np
 import config
 import pickle
-import time
 
 
 class ReplySpoofDataset(Dataset):
@@ -20,19 +19,16 @@ class ReplySpoofDataset(Dataset):
         super(ReplySpoofDataset, self).__init__()
         with open(index_file, 'rb') as handler:
             index = pickle.load(handler)
-        self.files = []     # files to examine what samples were incorrectly classified
-        self.data = []      # Extracted features
-        self.labels = []    # Labels
+        self.files = []   # files to examine what samples were incorrectly classified
+        self.data = []    # Extracted features
+        self.labels = []  # Labels
         # read files
         info(f"Loading data ({len(index)} files)...")
-        time.sleep(1.0)     # to allow buffer suppressing to stdout (used for the next tqdm call)
         for (filename, label) in tqdm(index):
             self.files.append(filename)
             self.data.append(np.load(filename))
             self.labels.append(label)
         info("Done...")
-        time.sleep(1.0)     # to allow finalizing tqdm instruction
-
 
     def __len__(self):
         return len(self.labels)
