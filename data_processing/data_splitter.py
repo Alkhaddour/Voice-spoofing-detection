@@ -8,9 +8,11 @@ import random
 
 from config import TRAIN_PROCESSED_DIR, VAL_PCT, VAL_PROCESSED_DIR, CLASS_CODE_MAP
 from utilities.basic_utils import make_valid_path
+from utilities.disply_utils import info
 
 
 def split_data():
+    info("Splitting data")
     classes = list(CLASS_CODE_MAP.keys())
 
     files_list = [[] for _ in classes]
@@ -33,3 +35,5 @@ def split_data():
             target_file = os.path.join(target_path, file)
             make_valid_path(target_path, is_dir=True)
             os.replace(src_file, target_file)
+
+    info("Done!")

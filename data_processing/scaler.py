@@ -6,13 +6,14 @@ In this file we define 3 functions
 #3  scale_sets(): Create a StandardScaler object using the train set, and use it to scale all of the sets, the scaler
                   is also saved for further use using other data.
 """
-from datetime import datetime
-
 from sklearn.preprocessing import StandardScaler
 from utilities.basic_utils import make_valid_path
+from utilities.disply_utils import info
 import pickle
 from config import *
 import numpy as np
+from tqdm import tqdm
+import time
 import os
 
 
@@ -25,22 +26,28 @@ def create_scaler(files, save_path=None):
     """
     train_features = []
     # Reading files
-    print(f"[{datetime.now()}] -- Reading files...")
-    for file in files:
-        part = np.load(file)
+    info(f"Reading files...")
+    time.sleep(1.0)
+    bar = tqdm(files)
+    for filename in bar:
+        bar.set_description(os.path.basename(filename))
+        part = np.load(filename)
         train_features.append(part)
+    time.sleep(1.0)
+
     # Concatenating
-    print(f"[{datetime.now()}] -- Concatenating data...")
+    info(f"Concatenating data...")
     train_features = np.concatenate(train_features, axis=0)
+
     # Build scaler
-    print(f"[{datetime.now()}] -- Building scaler...")
+    info(f"Building scaler...")
     scaler = StandardScaler()
     scaler.fit(train_features)
     # save and return
     if save_path is not None:
-        print(f"[{datetime.now()}] -- Saving scaler...")
+        info(f"Saving scaler...")
         pickle.dump(scaler, open(save_path, 'wb'))
-        print(f"[{datetime.now()}] -- scaler saved to: {save_path}")
+        info(f"Scaler saved to: {save_path}")
     return scaler
 
 
@@ -62,10 +69,14 @@ def scale_sets():
     files_to_create_scale = []
     for class_ in os.listdir(TRAIN_PROCESSED_DIR):
         class_dir = os.path.join(TRAIN_PROCESSED_DIR, class_)
-        for file in os.listdir(class_dir):
+        info(f"Scaling files in {class_dir}")
+        time.sleep(1.0)
+        for file in tqdm(os.listdir(class_dir)):
             files_to_create_scale.append(os.path.join(class_dir, file))
+        time.sleep(1.0)
 
     # Step 2: Create scale using the train data
+    info("Creating scaler")
     create_scaler(files_to_create_scale, SCALER_PATH)
 
     # Step 3: The scaler was saved to disk, we will re-read it from disk to check that it was saved correctly.
@@ -76,17 +87,24 @@ def scale_sets():
     for split_dir, scaled_dir in zip([TRAIN_PROCESSED_DIR, VAL_PROCESSED_DIR], [TRAIN_SCALED_DIR, VAL_SCALED_DIR]):
         for class_ in os.listdir(split_dir):
             class_dir = os.path.join(split_dir, class_)
-            for i, file in enumerate(os.listdir(class_dir)):
-                if i%200 == 0:
-                    print(f"[{datetime.now()}] -- {i} files processed...")
+            info(f"Scaling files in {class_dir}")
+            time.sleep(1.0)
+            bar = tqdm(enumerate(os.listdir(class_dir)))
+            for idx_file_pair in bar:
+                i, file = idx_file_pair
+                bar.set_description(f"Processing {file}")
                 src_file = os.path.join(class_dir, file)
                 target_dir = make_valid_path(os.path.join(scaled_dir, class_), is_dir=True)
                 target_file = os.path.join(target_dir, file)
                 scale_file(scaler, src_file, target_file)
+            time.sleep(1.0)
+
     # Step 5: Scale test data
-    for i, file in enumerate(os.listdir(TEST_PROCESSED_DIR)):
-        if i%200 == 0:
-            print(f"[{datetime.now()}] -- {i} files processed...")
+    bar = enumerate(os.listdir(TEST_PROCESSED_DIR))
+    for idx_file_pair in bar:
+        i, file = idx_file_pair
+        bar.set_description(f"Processing {file}", refresh=True)
         src_file = os.path.join(TEST_PROCESSED_DIR, file)
-        target_file = os.path.join( make_valid_path(TEST_SCALED_DIR, is_dir=True), file)
+        target_file = os.path.join(make_valid_path(TEST_SCALED_DIR, is_dir=True), file)
         scale_file(scaler, src_file, target_file)
+    time.sleep(1.0)

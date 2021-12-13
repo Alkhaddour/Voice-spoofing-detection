@@ -9,11 +9,12 @@ results to other directory, this function uses the parameters defined in the con
 """
 
 from python_speech_features import mfcc
+from tqdm import tqdm
 from utilities.basic_utils import warn, make_valid_path
-from datetime import datetime
 from config import *
 import scipy.io.wavfile as wav
 import numpy as np
+import time
 import os
 
 from utilities.disply_utils import info
@@ -78,11 +79,14 @@ class mfcc_feature_extractor:
         :param output_dir: directory to save features extracted of utterances as numpy array (replace .wav file
                            extension with .npy)
         """
-        for filename in os.listdir(input_dir):
-            info(f'[{datetime.now()}] -- Processing file {filename} ...')
+        info(f'Processing files in  {input_dir}')
+        time.sleep(1.0)
+        bar = tqdm(os.listdir(input_dir))
+        for filename in bar:
             if filename.endswith('.wav') is False:
+                bar.set_description(f"Skipping {filename}")
                 continue
-
+            bar.set_description(f"Processing {filename}")
             wavfile = os.path.join(input_dir, filename)
             mfcc_features = self.process_audio(wavfile)
             if mfcc_features is None:
@@ -90,6 +94,7 @@ class mfcc_feature_extractor:
 
             outfile = os.path.join(output_dir, f'{filename[:-4]}.npy')
             np.save(outfile, mfcc_features)
+        time.sleep(1.0)
 
     def process_audio(self, audio_path):
         """
