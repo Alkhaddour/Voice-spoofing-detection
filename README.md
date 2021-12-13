@@ -1,5 +1,5 @@
 # Voice spoofing detection
-<p>In this project I created a voice spoofing detection system using LSTM. <br>
+<p>In this project I created a voice spoofing detection system using LSTM. <br> </p>
 
 ### How to run the project
 <ol>
@@ -10,5 +10,6 @@
 </ol>
 
 ### Results
-The models achieved 99.1% train accuracy and 98.1% validation accuracy.
+<p>
+  The models achieved 99.1% train accuracy and 98.1% validation accuracy. Full list of metrics available <a href="https://github.com/Alkhaddour/Voice-spoofing-detection/blob/main/output/metrics.csv"> here</a>.
 </p>
