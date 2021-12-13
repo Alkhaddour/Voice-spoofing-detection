@@ -4,9 +4,11 @@ import torch
 from torch.nn.utils.rnn import pad_sequence
 from torch.utils.data import Dataset
 from utilities.disply_utils import info
+from tqdm import tqdm
 import numpy as np
 import config
 import pickle
+import time
 
 
 class ReplySpoofDataset(Dataset):
@@ -23,11 +25,14 @@ class ReplySpoofDataset(Dataset):
         self.labels = []    # Labels
         # read files
         info(f"Loading data ({len(index)} files)...")
-        for (filename, label) in index:
+        time.sleep(1.0)     # to allow buffer suppressing to stdout (used for the next tqdm call)
+        for (filename, label) in tqdm(index):
             self.files.append(filename)
             self.data.append(np.load(filename))
             self.labels.append(label)
         info("Done...")
+        time.sleep(1.0)     # to allow finalizing tqdm instruction
+
 
     def __len__(self):
         return len(self.labels)
