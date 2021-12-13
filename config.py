@@ -31,8 +31,8 @@ SAMPLE_RATE = 16000     # (in Hz) the expected sample rate for audio files
 FRAME_SIZE = 25  # MFCC frame size (ms)
 FRAME_STEP = 10  # MFCC step size  (ms)
 N_FEATURES = 40  # Number of cepstral coefficients
-N_FILT = 40     # Number of filters
-N_FFT = int(2 * SAMPLE_RATE * FRAME_SIZE / 1000)
+N_FILT = 40      # Number of filters
+N_FFT = 512
 
 # ------------------------------------------------- Model parameters --------------------------------------------------
 # Model params
@@ -41,7 +41,7 @@ HIDDEN_SIZE = 128       # LSTM hidden size
 LSTM_NUM_LAYERS = 3     # Number of LSTM layers
 LINEAR_SIZE = 512       # Size of projection size
 OUTPUT_SIZE = 1         # Model output size
-BATCH_SIZE = 64
+BATCH_SIZE = 32
 BATCH_FIRST = True
 N_EPOCHS = 60               # Number of the epochs for training the model
 LR = 5e-4                   # Initial Learning rate
@@ -59,6 +59,6 @@ SHOW_WARNINGS = True        # if True, the warning I create appears to output st
 SHOW_INFO_MESSAGES = True   # if True, any info message I create appears on the output stream.
 PROGRESS_STEP_TRAIN = 150   # print progress every PROGRESS_STEP mini-batches (training)
 PROGRESS_STEP_VAL = 50      # print progress every PROGRESS_STEP mini-batches (validation)
-CLASS_CODE_MAP = {'spoof': 1, 'human': 0}  # dictionary to convert CLASS to code
-CODE_CLASS_MAP = {1: 'spoof', 0: 'human'}  # dictionary to convert code to CLASS
+CLASS_CODE_MAP = {'spoof': 0, 'human': 1}  # dictionary to convert CLASS to code
+CODE_CLASS_MAP = {0: 'spoof', 1: 'human'}  # dictionary to convert code to CLASS
 
