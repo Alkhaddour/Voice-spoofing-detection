@@ -15,7 +15,8 @@ import numpy as np
 from tqdm import tqdm
 import time
 import os
-
+import gc
+import sys
 
 def create_scaler(files, save_path=None):
     """
@@ -28,19 +29,31 @@ def create_scaler(files, save_path=None):
     # Reading files
     info(f"Reading files...")
     time.sleep(1.0)
-    bar = tqdm(files)
+    bar = tqdm(files, file=sys.stdout)
     for filename in bar:
         bar.set_description(os.path.basename(filename))
         part = np.load(filename)
         train_features.append(part)
-    time.sleep(1.0)
+    gc.collect()
+    time.sleep(10.0)
 
     # Concatenating
-    info(f"Concatenating data...")
-    train_features = np.concatenate(train_features, axis=0)
+    info(f"Concatenating data1...")
+    train_features1 = np.concatenate(train_features[:len(train_features)//2], axis=0)
+    info(f"Concatenating data2...")
+    train_features2 = np.concatenate(train_features[len(train_features) // 2:], axis=0)
+
+    info(f"Concatenating data3...")
+    del train_features
+    gc.collect()
+    time.sleep(10.0)
+    train_features = np.concatenate([train_features1, train_features2], axis=0)
 
     # Build scaler
     info(f"Building scaler...")
+    del train_features1, train_features2
+    gc.collect()
+    time.sleep(10.0)
     scaler = StandardScaler()
     scaler.fit(train_features)
     # save and return
@@ -89,9 +102,8 @@ def scale_sets():
             class_dir = os.path.join(split_dir, class_)
             info(f"Scaling files in {class_dir}")
             time.sleep(1.0)
-            bar = tqdm(enumerate(os.listdir(class_dir)))
-            for idx_file_pair in bar:
-                i, file = idx_file_pair
+            bar = tqdm(os.listdir(class_dir))
+            for file in bar:
                 bar.set_description(f"Processing {file}")
                 src_file = os.path.join(class_dir, file)
                 target_dir = make_valid_path(os.path.join(scaled_dir, class_), is_dir=True)
@@ -100,10 +112,9 @@ def scale_sets():
             time.sleep(1.0)
 
     # Step 5: Scale test data
-    bar = enumerate(os.listdir(TEST_PROCESSED_DIR))
-    for idx_file_pair in bar:
-        i, file = idx_file_pair
-        bar.set_description(f"Processing {file}", refresh=True)
+    bar = tqdm(os.listdir(TEST_PROCESSED_DIR))
+    for file in bar:
+        bar.set_description(f"Processing {file}")
         src_file = os.path.join(TEST_PROCESSED_DIR, file)
         target_file = os.path.join(make_valid_path(TEST_SCALED_DIR, is_dir=True), file)
         scale_file(scaler, src_file, target_file)
