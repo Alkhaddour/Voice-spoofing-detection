@@ -13,5 +13,5 @@
 
 ### Results
 <p>
-  The models achieved 98.1% train accuracy and 97.4% validation accuracy while maximizing AUPRC, and  97.2% train accuracy and 96.4% validation accuracy while maximizing AUPRC. Full list of metrics available <a href="https://github.com/Alkhaddour/Voice-spoofing-detection/blob/main/output/metrics.csv"> here</a> and <a href="https://github.com/Alkhaddour/Voice-spoofing-detection/blob/main/output/metrics_EER.csv"> here</a>.
+  The models achieved 98.1% train accuracy and 97.4% validation accuracy while maximizing AUPRC, and  97.2% train accuracy and 96.4% validation accuracy while minimizing EER. Full list of metrics available <a href="https://github.com/Alkhaddour/Voice-spoofing-detection/blob/main/output/metrics.csv"> here</a> and <a href="https://github.com/Alkhaddour/Voice-spoofing-detection/blob/main/output/metrics_EER.csv"> here</a>.
 </p>
